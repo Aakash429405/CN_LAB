@@ -1,0 +1,55 @@
+class Topology(): 
+    def __init__(self, nodes): 
+        self.nodes = nodes 
+        self.graph = [[0 for column in range(nodes)]  
+                    for row in range(nodes)] 
+        self.prev = [''] * self.nodes
+  
+    def print_routing_table(self): 
+        print("Source \tDestination \tDistance \tPath")
+        for node in range(self.nodes):
+            path = []
+            curr = node
+            while curr != self.src:
+                path.insert(0, curr)
+                curr = self.prev[curr]
+            path.insert(0, self.src)
+            print(f"{self.src} \t{node} \t\t{self.dist[node]} \t\t{path}")
+
+    def min_distance_node(self, visited):
+        min_distance = 10000000
+        for v in range(self.nodes):
+            if self.dist[v] < min_distance and not visited[v]:
+                min_distance = self.dist[v]
+                _min_distance_node = v
+  
+        return _min_distance_node
+    
+    def add_direct_connection(self, src, dest, weight):
+        self.graph[src][dest] = self.graph[dest][src] = weight
+
+    def dijkstra(self, src): 
+        self.src = src
+        self.dist = [10000000] * self.nodes 
+        self.dist[src] = 0
+        visited = [False] * self.nodes 
+  
+        for _ in range(self.nodes): 
+            u = self.min_distance_node(visited) 
+            visited[u] = True
+            for v in range(self.nodes): 
+                if self.graph[u][v] > 0 and not visited[v] and self.dist[v] > self.dist[u] + self.graph[u][v]: 
+                        self.dist[v] = self.dist[u] + self.graph[u][v] 
+                        self.prev[v] = u
+    
+network = Topology(int(input("Enter number of nodes in the topology: ")))
+num_edges = int(input("Enter number of edges: "))
+
+for i in range(num_edges):
+    src, dest, cost = list(map(int, input("Enter [src] [dest] [weight]: ").split(' ')))
+    network.add_direct_connection(src, dest, cost)
+
+src = int(input("Enter [src] to find costs: "))
+
+network.dijkstra(src)
+network.print_routing_table()
