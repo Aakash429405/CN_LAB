@@ -1,0 +1,83 @@
+#include<iostream.h>
+#include<string.h>
+#include<conio.h>
+#define MAX 50
+void main(){
+ clrscr();
+ char data[MAX],msg[MAX];
+ char div[18];
+ int i,j,k;
+ for(i=0 ; i<17 ; i++){
+div[i] = '0';
+ }
+ div[17] = '\0';
+ div[16] = '1';
+ div[12] = '1';
+ div[5] = '1';
+ div[0] = '1';
+ strrev(div);
+ cout<<"div:"<<div<<"\n";
+ cout<<"Message:";
+ cin>>data;
+ strcpy(msg , data);
+ int len = strlen(data);
+ for(i = len ; i<len+16 ; i++){
+data[i] = '0';
+ }
+ data[i] = '\0';
+10
+ //cout<<"data:"<<data<<"\n";
+ for(i = 0 ; i<len ; i++){
+j = i;
+//cout<<"\n\nini:"<<data<<"\ndiv:";
+//for(int t = 0;t<i;t++)cout<<" ";
+//cout<<div<<"\n";
+if(data[j]=='0')continue;
+for(k = 0 ; k<17 ;k++){
+ if(data[j] == div[k]){
+data[j] = '0';
+ }else{
+data[j] = '1';
+ }
+ j++;
+}
+//cout<<"fin:"<<data<<"\n\n";
+ }
+ char res[17],dataAndCRC[50];
+ strcpy(res,&data[len]);
+ cout<<"CRC:"<<res<<"\n";
+ strcpy(dataAndCRC,msg);
+ strcpy(&dataAndCRC[len],res);
+ cout<<"DATA and CRC:"<<dataAndCRC<<"\n";
+ cout<<"\n\n__________\n\n";
+ cout<<"RECEIVER\n";
+ cout<<"Received data:";
+ char rdata[MAX];
+ cin>>rdata;
+ for(i = 0 ; i<strlen(rdata)-16 ; i++){
+j = i;
+if(rdata[j]=='0')continue;
+for(k = 0 ; k<17 ;k++){
+ if(rdata[j] == div[k]){
+rdata[j] = '0';
+ }else{
+rdata[j] = '1';
+ }
+ j++;
+}
+ }
+ char syndrome[17];
+ strcpy(syndrome,&rdata[strlen(rdata)-16]);
+ cout<<"\nsyndrome:"<<syndrome<<"\n";
+ int flag = 1;
+ for(int q = 0 ; q<strlen(syndrome) ; q++){
+if(syndrome[q]=='1'){
+ cout<<"Improper transmission\n";
+ flag=0;
+ break;
+}
+ }
+ if(flag)
+cout<<"Proper transmission";
+ getch();
+}
